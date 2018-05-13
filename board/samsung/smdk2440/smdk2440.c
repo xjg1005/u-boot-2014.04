@@ -118,11 +118,12 @@ int dram_init(void)
 #ifdef CONFIG_CMD_NET
 int board_eth_init(bd_t *bis)
 {
-	int rc = 0;
-#ifdef CONFIG_CS8900
-	rc = cs8900_initialize(0, CONFIG_CS8900_BASE);
+	 int rc = 0;	
+#ifdef CONFIG_DRIVER_DM9000	
+	 rc=dm9000_initialize(bis);	
 #endif
-	return rc;
+	 return rc;
+
 }
 #endif
 
