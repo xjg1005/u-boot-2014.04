@@ -295,7 +295,7 @@ void	reset_cmd_timeout(void);
 extern char console_buffer[];
 
 /* arch/$(ARCH)/lib/board.c */
-void	board_init_f(ulong);
+unsigned int	board_init_f(ulong);
 void	board_init_r  (gd_t *, ulong) __attribute__ ((noreturn));
 int	checkboard    (void);
 int	checkflash    (void);

@@ -19,6 +19,7 @@ SECTIONS
 	{
 		*(.__image_copy_start)
 		CPUDIR/start.o (.text*)
+		board/samsung/smdk2440/built-in.o (.text)
 		*(.text*)
 	}
 

@@ -70,9 +70,30 @@ ENTRY(_main)
 	sub	sp, sp, #GD_SIZE	/* allocate one GD above SP */
 	bic	sp, sp, #7	/* 8-byte alignment for ABI compliance */
 	mov	r9, sp		/* GD is above SP */
+#if 1
+	/* 4. 重定位 : 把bootloader本身的代码从flash复制到它的链接地址去 */
+	bl nand_init_S3c2440
+	mov r0, #0
+	ldr r1, =__image_copy_start
+	ldr r2, =__image_copy_end
+	sub r2, r2, r1
+	
+	bl copy_code_to_sdram
+	bl clear_bss_s3c2440
+	ldr pc, =call_board_init_f
+	
+call_board_init_f:
+
 	mov	r0, #0
 	bl	board_init_f
 
+	ldr sp, [r9, #GD_START_ADDR_SP] /* sp =gd->start_addr_sp */
+    bic sp, sp, #7 /* 8-byte alignment forABI compliance */
+    ldr r9, [r9, #GD_BD] /* r9 = gd->bd */
+    sub r9, r9, #GD_SIZE /* new GD is below bd*/
+    ldr r1, = __image_copy_start
+    bl board_init_r
+#else
 #if ! defined(CONFIG_SPL_BUILD)
 
 /*
@@ -119,5 +140,5 @@ clbss_l:cmp	r0, r1			/* while not at end of BSS */
 	/* we should not return here. */
 
 #endif
-
+#endif
 ENDPROC(_main)
