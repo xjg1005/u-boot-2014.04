@@ -130,6 +130,10 @@
 #define CONFIG_LZO
 #define CONFIG_LZMA
 
+
+#define CONFIG_BOOTARGS 	"console=ttySAC0 root=/dev/mtdblock3"
+#define CONFIG_BOOTCOMMAND 	"nand read 30000000 kernel;bootm 30000000"
+
 /*-----------------------------------------------------------------------
  * Physical Memory Map
  */
@@ -155,11 +159,25 @@
 #define CONFIG_SYS_FLASH_BANKS_LIST     { CONFIG_SYS_FLASH_BASE }
 #define CONFIG_SYS_MAX_FLASH_SECT	(35)
 
-#define CONFIG_ENV_ADDR			(CONFIG_SYS_FLASH_BASE + 0x070000)
+#if 0
+#define CONFIG_ENV_ADDR                 (CONFIG_SYS_FLASH_BASE +0x070000)
 #define CONFIG_ENV_IS_IN_FLASH
-#define CONFIG_ENV_SIZE			0x10000
+#define CONFIG_ENV_SIZE                    0x10000
+#endif
+#define CONFIG_ENV_IS_IN_NAND
+#define CONFIG_ENV_OFFSET 0X80000//256k for u-boot
+#define CONFIG_ENV_SIZE 0x20000//128k for env
 /* allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
+
+
+#define CONFIG_CMD_MTDPARTS
+#define CONFIG_MTD_DEVICE
+#define MTDIDS_DEFAULT		"nand0=smdk2440-0"  /* 哪一个设备 */
+#define MTDPARTS_DEFAULT	"mtdparts=smdk2440-0:1m(u-boot),"	\
+						"128k(params),"		\
+						"5m(kernel),"	\
+						"-(rootfs)"		\
 
 /*
  * Size of malloc() pool
