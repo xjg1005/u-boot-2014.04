@@ -110,7 +110,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT	"SMDK2440 # "
+#define CONFIG_SYS_PROMPT	"Xiangjg2440 # "
 #define CONFIG_SYS_CBSIZE	256
 /* Print Buffer Size */
 #define CONFIG_SYS_PBSIZE	(CONFIG_SYS_CBSIZE + \
@@ -133,6 +133,43 @@
 
 #define CONFIG_BOOTARGS 	"console=ttySAC0 root=/dev/mtdblock3"
 #define CONFIG_BOOTCOMMAND 	"nand read 30000000 kernel;bootm 30000000"
+
+
+#if 1
+#define CONFIG_CMD_BMP 
+#define CONFIG_VIDEO 
+#define CONFIG_VIDEO_S3C2440 
+#define CONFIG_VIDEO_LOGO 
+#define VIDEO_FB_16BPP_WORD_SWAP 
+
+#define CONFIG_VIDEO_SW_CURSOR 
+#define CONFIG_VIDEO_BMP_LOGO 
+//#define CONFIG_CONSOLE_EXTRA_INFO
+//#define CONFIG_CONSOLE_CURSOR
+//#define CONFIG_CONSOLE_TIME
+#define CONFIG_CFB_CONSOLE
+#define CONFIG_SYS_CONSOLE_IS_IN_ENV
+#define CONFIG_CONSOLE_MUX
+
+//#define CFG_CONSOLE_INFO_QUIET 
+//#define VIDEO_FB_LITTLE_ENDIAN 
+#define CONFIG_SPLASH_SCREEN 
+#define CONFIG_SYS_VIDEO_LOGO_MAX_SIZE         (480*272+1024+100) /* 100 = slack */ 
+#define CONFIG_VIDEO_BMP_GZIP 
+#define CONFIG_CMD_UNZIP 
+#define LCD_VIDEO_ADDR         0x33d00000
+
+/*for PC-keyboard*/
+#define VIDEO_KBD_INIT_FCT     0 
+#define VIDEO_TSTC_FCT         serial_tstc 
+#define VIDEO_GETC_FCT         serial_getc
+
+#endif
+
+
+#define CONFIG_BOOTARGS 	"console=ttySAC0 root=/dev/mtdblock3"
+#define CONFIG_BOOTCOMMAND 	"nand read 30000000 kernel;bootm 30000000"
+
 
 /*-----------------------------------------------------------------------
  * Physical Memory Map

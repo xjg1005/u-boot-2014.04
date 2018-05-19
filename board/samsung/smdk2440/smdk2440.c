@@ -13,6 +13,7 @@
 #include <netdev.h>
 #include <asm/io.h>
 #include <asm/arch/s3c24x0_cpu.h>
+#include <video_fb.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -138,3 +139,77 @@ ulong board_flash_get_legacy(ulong base, int banknum, flash_info_t *info)
 	info->interface = FLASH_CFI_X16;
 	return 1;
 }
+
+
+#define MVAL		(0)
+#define MVAL_USED 	(0)		//0=each frame   1=rate by MVAL
+#define INVVDEN		(1)		//0=normal       1=inverted
+#define BSWP		(0)		//Byte swap control
+#define HWSWP		(1)		//Half word swap control
+
+# if 1
+//TFT 480x272
+#define LCD_XSIZE_TFT_480x272 	(480)	
+#define LCD_YSIZE_TFT_480x272 	(272)
+
+//TFT480x272
+#define HOZVAL_TFT_480x272	(LCD_XSIZE_TFT_480x272-1)
+#define LINEVAL_TFT_480x272	(LCD_YSIZE_TFT_480x272-1)
+
+//Timing parameter for NEC3.5"
+#define VBPD_480x272		(40)		
+#define VFPD_480x272		(50)
+#define VSPW_480x272		(1)
+
+#define HBPD_480x272		(50)
+#define HFPD_480x272		(50)
+#define HSPW_480x272_NEC	(1)  //Adjust the horizontal displacement of the screen :tekkamanninja@163.com
+#define HSPW_480x272_TD		(1)  //64MB nand mini2440 is 36 ,128MB is 23
+#define CLKVAL_TFT_480x272	(3) 	
+//FCLK=101.25MHz,HCLK=50.625MHz,VCLK=6.33MHz
+#else
+//TFT 480x272
+#define LCD_XSIZE_TFT_480x272 	(272)	
+#define LCD_YSIZE_TFT_480x272 	(480)
+
+//TFT480x272
+#define HOZVAL_TFT_480x272	(288)
+#define LINEVAL_TFT_480x272	(525)
+
+//Timing parameter for NEC3.5"
+#define VBPD_480x272		(40)		
+#define VFPD_480x272		(5)
+#define VSPW_480x272		(1)
+
+#define HBPD_480x272		(8)
+#define HFPD_480x272		(8)
+#define HSPW_480x272_NEC	(1)  //Adjust the horizontal displacement of the screen :tekkamanninja@163.com
+#define HSPW_480x272_TD		(1)  //64MB nand mini2440 is 36 ,128MB is 23
+#define CLKVAL_TFT_480x272	(3) 	
+//FCLK=101.25MHz,HCLK=50.625MHz,VCLK=6.33MHz
+
+#endif
+
+void board_video_init(GraphicDevice *pGD) 
+{ 
+	struct s3c24x0_lcd * const lcd	 = s3c24x0_get_base_lcd(); 
+	struct s3c2440_nand * const nand = s3c2440_get_base_nand();
+    /* FIXME: select LCM type by env variable */ 
+	 
+	/* Configuration for GTA01 LCM on QT2410 */ 
+	lcd->lcdcon1 = 0x00000378; /* CLKVAL=4, BPPMODE=16bpp, TFT, ENVID=0 */ 
+	lcd->lcdcon2 = (VBPD_480x272<<24)|(LINEVAL_TFT_480x272<<14)|(VFPD_480x272<<6)|(VSPW_480x272); 
+	lcd->lcdcon3 = (HBPD_480x272<<19)|(HOZVAL_TFT_480x272<<8)|(HFPD_480x272); 
+
+	if ( (nand->nfconf) & 0x08 )	{ 
+		lcd->lcdcon4 = (MVAL<<8)|(HSPW_480x272_TD);
+	}
+	else{
+	  	lcd->lcdcon4 = (MVAL<<8)|(HSPW_480x272_NEC);
+	}
+	
+	lcd->lcdcon5 = 0x00000f09; 
+	lcd->lpcsel  = 0x00000000; 
+} 
+
+
